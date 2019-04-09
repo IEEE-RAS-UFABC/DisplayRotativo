@@ -1,0 +1,42 @@
+int const sensor = 13;
+double tempoAnterior = 0;
+double tempoPorLed = 1000;
+int const quantidadeLeds = 8;
+int const quantidadePixelsPorRotacao = 80;
+bool matrix[quantidadeLeds][quantidadePixelsPorRotacao];
+
+void setup() {
+  attachInterrupt(digitalPinToInterrupt(2), velocidade, RISING);
+
+  for(int i = 0; i<quantidadeLeds; i++){ // Criando uma matriz boba para textes;
+    for(int j = 0; j<quantidadePixelsPorRotacao; j++){
+      if(j%2==0){
+        matrix[i][j] =  1;
+      }
+      else{
+        matrix[i][j] =  0;
+      }
+    }
+  } //Fim da crianção da matriz boba
+  
+  Serial.begin(9600);
+  for(int i = 3; i<quantidadeLeds+3; i++){
+    pinMode(i, OUTPUT);
+  }
+}
+
+void loop() {
+  for(int j = 0; j<quantidadePixelsPorRotacao; j++){
+    for(int i = 0; i<quantidadeLeds; i++){
+       digitalWrite(i+3, matrix[i][j]);      
+    }
+    delay(tempoPorLed);
+  }
+}
+
+void velocidade (){
+ double tempo = millis();
+ tempoPorLed = (tempo - tempoAnterior)/quantidadePixelsPorRotacao;
+ tempoAnterior = tempo;
+ Serial.println(tempoPorLed);
+}
